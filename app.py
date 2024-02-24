@@ -1,34 +1,28 @@
-import numpy as np
 import cv2
 
-# Reading image
-img2 = cv2.imread('arrow.jpg', cv2.IMREAD_COLOR)
+# read the input image
+img = cv2.imread('polygon.png')
 
-# Reading same image in another variable and converting to gray scale.
-img = cv2.imread('arrow.jpg', cv2.IMREAD_GRAYSCALE)
+# convert the image to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-# Converting image to a binary image (black and white only image).
-_, threshold = cv2.threshold(img, 110, 255, cv2.THRESH_BINARY)
+# apply thresholding to convert the grayscale image to a binary image
+ret, thresh = cv2.threshold(gray, 50, 255, 0)
 
-# Detecting shapes in image by selecting region with same colors or intensity.
-contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+# find the contours
+contours, hierarchy = cv2.findContours(
+    thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+print("Number of contours detected:", len(contours))
 
-# Searching through every region selected to find the required polygon.
 for cnt in contours:
-    area = cv2.contourArea(cnt)
+    approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
+    (x, y) = cnt[0, 0]
 
-    # Shortlisting the regions based on there area.
-    if area > 400:
-        approx = cv2.approxPolyDP(cnt, 0.009 * cv2.arcLength(cnt, True), True)
+    if len(approx) >= 5:
+        img = cv2.drawContours(img, [approx], -1, (0, 255, 255), 3)
+        cv2.putText(img, 'Polygon', (x, y),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
 
-        # Checking if the no. of sides of the selected region is 7.
-        if (len(approx) == 7):
-            cv2.drawContours(img2, [approx], 0, (0, 0, 255), 5)
-
-# Showing the image along with outlined arrow.
-cv2.imshow('image2', img2)
-
-# Exiting the window if 'q' is pressed on the keyboard.
-if cv2.waitKey(0) & 0xFF == ord('q'):
-    cv2.destroyAllWindows()
-
+cv2.imshow("Polygon", img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
