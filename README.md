@@ -1,18 +1,22 @@
 # Detect Polygons in an Image using OpenCV
 
-This project uses **OpenCV**, a popular library for computer vision, to detect polygons in an image.  
+## computer vision
+
+This project uses **OpenCV**, a popular library for computer vision, to detect common geometric shapes (triangles, squares, rectangles, pentagons, hexagons, circles, and stars) in an image.
 
 The program works by:
 1. Reading an input image.
 2. Converting it to grayscale.
-3. Applying thresholding to create a binary image.
+3. Applying adaptive thresholding to create a binary image.
 4. Finding contours in the image.
-5. Detecting polygons based on contour approximation.
-6. Drawing the detected polygons and labeling them on the image.
+5. Approximating contours to polygons.
+6. Detecting the shape based on the number of vertices and contour properties.
+7. Drawing the detected polygons and labeling them on the image.
 
 ## Requirements
 - Python 3.x  
 - OpenCV (`opencv-python`)
+- NumPy (`numpy`)
 
 ## Usage
 ```bash

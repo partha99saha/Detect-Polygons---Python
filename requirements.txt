@@ -3,6 +3,4 @@
 # pip freeze > requirements.txt
 
 opencv-python
-opencv-contrib-python
 numpy
-Pillow
