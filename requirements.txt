@@ -1,0 +1,8 @@
+# python -m venv venv
+# venv\Scripts\activate
+# pip freeze > requirements.txt
+
+opencv-python
+opencv-contrib-python
+numpy
+Pillow
