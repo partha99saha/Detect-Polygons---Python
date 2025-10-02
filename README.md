@@ -1,4 +1,4 @@
-# Detect Polygons in an Image using OpenCV
+# Detect Geometric Shapes in an Image using OpenCV
 
 This project uses **OpenCV**, a popular library for computer vision, to detect common geometric shapes (triangles, squares, rectangles, Rhombus, Trapeziums, pentagons, hexagons, circles, Ovals and stars) in an image.
 
@@ -12,7 +12,7 @@ Common tasks in computer vision include:
 - **Feature Extraction** – Detecting key points, edges, or shapes for analysis.
 
 In this project, computer vision techniques like 
-**grayscale conversion, thresholding, contour detection, and polygon approximation** 
+**grayscale conversion, thresholding, contour detection, and geometric shapes approximation** 
 are used to identify and label geometric shapes in images.
 
 ## The program works by:
@@ -20,9 +20,9 @@ are used to identify and label geometric shapes in images.
 2. Converting it to grayscale.
 3. Applying adaptive thresholding to create a binary image.
 4. Finding contours in the image.
-5. Approximating contours to polygons.
+5. Approximating contours to geometric shapes.
 6. Detecting the shape based on the number of vertices and contour properties.
-7. Drawing the detected polygons and labeling them on the image.
+7. Drawing the detected geometric shapes and labeling them on the image.
 
 ## Features
 - Supports **rotated and tilted shapes**.
