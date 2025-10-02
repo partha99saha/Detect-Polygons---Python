@@ -25,6 +25,12 @@ def get_shape_name(cnt, approx):
             return "Circle"
         elif not cv2.isContourConvex(approx):
             return "Star"
+        elif len(cnt) >= 5:
+            ellipse = cv2.fitEllipse(cnt)
+            (center, axes, orientation) = ellipse
+            major_axis, minor_axis = max(axes), min(axes)
+            ratio = minor_axis / major_axis
+            return "Circle" if ratio > 0.85 else "Oval"
         else:
             return "Polygon"
 
