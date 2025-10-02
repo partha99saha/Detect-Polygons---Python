@@ -1,6 +1,6 @@
 # Detect Polygons in an Image using OpenCV
 
-This project uses **OpenCV**, a popular library for computer vision, to detect common geometric shapes (triangles, squares, rectangles, pentagons, hexagons, circles, and stars) in an image.
+This project uses **OpenCV**, a popular library for computer vision, to detect common geometric shapes (triangles, squares, rectangles, Rhombus, Trapeziums, pentagons, hexagons, circles, Ovals and stars) in an image.
 
 ## About Computer Vision
 **Computer Vision (CV)** is a field of artificial intelligence that enables computers to interpret and understand visual information from the world, such as images and videos. It involves processing, analyzing, and making decisions based on visual data.
@@ -23,6 +23,12 @@ are used to identify and label geometric shapes in images.
 5. Approximating contours to polygons.
 6. Detecting the shape based on the number of vertices and contour properties.
 7. Drawing the detected polygons and labeling them on the image.
+
+## Features
+- Supports **rotated and tilted shapes**.
+- Accurately distinguishes **rectangles, squares, rhombus, and trapeziums**.  
+- Detects **stars and ovals** correctly without mislabeling.  
+- Avoids duplicate labels and overlapping contours.
 
 ## Requirements
 - Python 3.x  

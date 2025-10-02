@@ -3,6 +3,34 @@ import numpy as np
 import random
 
 
+def quadrilateral_type(pts):
+    # Compute slopes of four sides
+    slopes = []
+    for i in range(4):
+        p1 = pts[i]
+        p2 = pts[(i + 1) % 4]
+        dx = p2[0] - p1[0]
+        dy = p2[1] - p1[1]
+        if dx == 0:
+            slope = float("inf")
+        else:
+            slope = dy / dx
+        slopes.append(slope)
+
+    # Check parallel sides
+    # In trapezium, exactly one pair of opposite sides are parallel
+    parallel_pairs = 0
+    if abs(slopes[0] - slopes[2]) < 0.1:
+        parallel_pairs += 1
+    if abs(slopes[1] - slopes[3]) < 0.1:
+        parallel_pairs += 1
+
+    # Determine type
+    # 2 pairs parallel → rectangle or square/rhombus
+    # 1 pair parallel → trapezium
+    return parallel_pairs
+
+
 def get_shape_name(cnt, approx):
     sides = len(approx)
     area = cv2.contourArea(cnt)
@@ -12,19 +40,43 @@ def get_shape_name(cnt, approx):
     if sides == 3:
         return "Triangle"
     elif sides == 4:
-        x, y, w, h = cv2.boundingRect(approx)
-        aspect_ratio = w / float(h)
-        return "Square" if 0.95 <= aspect_ratio <= 1.05 else "Rectangle"
+        pts = approx.reshape(4, 2)
+        parallel_pairs = quadrilateral_type(pts)
+
+        # Check side lengths for rhombus/square
+        dists = [np.linalg.norm(pts[i] - pts[(i + 1) % 4]) for i in range(4)]
+        if max(dists) - min(dists) < 0.1 * np.mean(dists):
+            # all sides roughly equal → rhombus or square
+            angles = []
+            for i in range(4):
+                v1 = pts[(i + 1) % 4] - pts[i]
+                v2 = pts[(i + 2) % 4] - pts[(i + 1) % 4]
+                cos_angle = np.dot(v1, v2) / (
+                    np.linalg.norm(v1) * np.linalg.norm(v2) + 1e-5
+                )
+                angles.append(np.degrees(np.arccos(np.clip(cos_angle, -1.0, 1.0))))
+            if all(abs(a - 90) < 10 for a in angles):
+                return "Square"
+            else:
+                return "Rhombus"
+        else:
+            if parallel_pairs == 2:
+                return "Rectangle"
+            elif parallel_pairs == 1:
+                return "Trapezium"
+            else:
+                return "Quadrilateral"
+
     elif sides == 5:
         return "Pentagon"
     elif sides == 6:
         return "Hexagon"
     else:
-        # 1️⃣ Star detection first: non-convex + enough vertices + low circularity
+        # Star detection first
         if not cv2.isContourConvex(approx) and sides > 6 and circularity < 0.85:
             return "Star"
 
-        # 2️⃣ Circle or Oval detection using ellipse
+        # Circle or Oval detection using ellipse
         if len(cnt) >= 5:
             ellipse = cv2.fitEllipse(cnt)
             (center, axes, orientation) = ellipse
@@ -35,7 +87,7 @@ def get_shape_name(cnt, approx):
             else:
                 return "Oval"
 
-        # 3️⃣ Fallback for irregular polygon
+        # Fallback for irregular polygon
         return "Polygon"
 
 
@@ -87,7 +139,7 @@ def detect_polygons(image_path, min_area=100):
             cx, cy = x + w // 2, y + h // 2
 
         cv2.putText(
-            img, shape_name, (cx - 20, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2
+            img, shape_name, (cx - 10, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2
         )
 
     cv2.imshow("Detected Shapes", img)
