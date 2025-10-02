@@ -7,6 +7,7 @@ def get_shape_name(cnt, approx):
     sides = len(approx)
     area = cv2.contourArea(cnt)
     perimeter = cv2.arcLength(cnt, True)
+    circularity = 4 * np.pi * area / (perimeter * perimeter + 1e-5)
 
     if sides == 3:
         return "Triangle"
@@ -19,7 +20,11 @@ def get_shape_name(cnt, approx):
     elif sides == 6:
         return "Hexagon"
     else:
-        # Oval or Circle detection using ellipse
+        # 1️⃣ Star detection first: non-convex + enough vertices + low circularity
+        if not cv2.isContourConvex(approx) and sides > 6 and circularity < 0.85:
+            return "Star"
+
+        # 2️⃣ Circle or Oval detection using ellipse
         if len(cnt) >= 5:
             ellipse = cv2.fitEllipse(cnt)
             (center, axes, orientation) = ellipse
@@ -30,12 +35,7 @@ def get_shape_name(cnt, approx):
             else:
                 return "Oval"
 
-        # Star detection using convexity and circularity
-        circularity = 4 * np.pi * area / (perimeter * perimeter + 1e-5)
-        if not cv2.isContourConvex(approx) and circularity < 0.8:
-            return "Star"
-
-        # Fallback for irregular polygon
+        # 3️⃣ Fallback for irregular polygon
         return "Polygon"
 
 
