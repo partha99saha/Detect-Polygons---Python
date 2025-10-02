@@ -62,4 +62,4 @@ def detect_polygons(image_path, min_area=100):
     cv2.destroyAllWindows()
 
 
-detect_polygons("polygon.png")
+detect_polygons("geometric-shapes.jpg")
